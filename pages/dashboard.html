@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" href="../assets/favicon.png">
+    <title>Pulsar 9000</title>
+  <title>API Key Generator</title>
+  <script>
+    function generateKey() {
+      if (!window.crypto || !window.crypto.subtle) {
+        alert('Web Crypto API is not supported in this browser.');
+        return;
+      }
+
+      var keyLength = 32; // 256 bits
+      var keyBuffer = new Uint8Array(keyLength);
+      window.crypto.getRandomValues(keyBuffer);
+
+      var key = arrayBufferToHexString(keyBuffer);
+
+      // Save the key in local storage
+      var keys = localStorage.getItem('privateKeys');
+      keys = keys ? JSON.parse(keys) : [];
+      keys.push(key);
+      localStorage.setItem('privateKeys', JSON.stringify(keys));
+
+      document.getElementById('key').value = key;
+    }
+
+    function deleteKeys() {
+      // Delete all keys from local storage
+      localStorage.removeItem('privateKeys');
+      document.getElementById('key').value = '';
+    }
+
+    function displayKeys() {
+      // Display all saved keys
+      var keys = localStorage.getItem('privateKeys');
+      keys = keys ? JSON.parse(keys) : [];
+      
+      var keyList = document.getElementById('keyList');
+      keyList.innerHTML = '';
+
+      keys.forEach(function(key) {
+        var listItem = document.createElement('li');
+        listItem.appendChild(document.createTextNode(key));
+        keyList.appendChild(listItem);
+      });
+    }
+
+    function arrayBufferToHexString(buffer) {
+      var byteArray = new Uint8Array(buffer);
+      var hexString = '';
+      for (var i = 0; i < byteArray.length; i++) {
+        var hex = (byteArray[i] & 0xff).toString(16);
+        hex = hex.length === 1 ? '0' + hex : hex;
+        hexString += hex;
+      }
+      return hexString;
+    }
+  </script>
+</head>
+<body>
+         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid container">
+            <a class="navbar-brand" href="/">
+                <img src="../assets/bot.png" alt="" width="50" height="50" class="rounded-circle"> &nbsp;
+                <span>Pulsar 9000</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="../index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" 
+                                href="./tools.html">Tools</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page"
+                                href="./commands.html">Commands</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./team.html">Staff</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="linksdrop" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Links
+                        </a>
+                        <ul class="dropdown-menu bgn" aria-labelledby="linksdrop">
+                            <li><a class="dropdown-item text-muted font-weight-bold" href="https://discordapp.com/oauth2/authorize?client_id=1072266508916498495&scope=bot&permissions=2146958847" target="_blank">Invite
+                                    Bot</a>
+                            </li>
+                            <li><a class="dropdown-item text-muted font-weight-bold" href="https://discord.gg/7J2Ydp9FXN" target="_blank">Support
+                                    Server</a></li>
+                          
+                        </ul>
+                    </li>
+                </ul>
+                <div class="d-flex ml-auto" id="headerlogin">
+                    <li class="nav-item" style="list-style: none;">
+                        <a class="nav-link btn btn-outline-secondary login" href="https://discord.com/oauth2/authorize?client_id=1158445562060877834&redirect_uri=https://pulsar-9000-bot.ironweb10.repl.co&response_type=code&scope=identify">Login</a>
+                    </li>
+                </div>
+            </div>
+        </div>
+    </nav>
+  <h1><FONT SIZE=3 COLOR="white">Private Key Generator</FONT><FONT SIZE=8> </FONT> </h1>
+  <button onclick="generateKey()">Generate Private Key</button>
+  <button onclick="deleteKeys()">Delete Keys</button>
+  <br><br>
+  <input type="text" id="key" readonly>
+  <br><br>
+  <h2><FONT SIZE=3 COLOR="white">Saved Private Keysㅤ</FONT><FONT SIZE=4> </FONT> </h2>
+  <ul id="keyList"></ul>
+
+  <script>
+    displayKeys(); // Display saved keys on page load
+  </script>
+</body>
+</html>
