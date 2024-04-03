@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortnite Weapons</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 0 20px;
+        }
+        .weapon {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            padding: 10px;
+        }
+        .weapon img {
+            max-width: 100px;
+            max-height: 100px;
+            margin-right: 10px;
+        }
+        .valued {
+            color: red; /* Cambiamos a rojo */
+        }
+        .not-valued {
+            color: green; /* Cambiamos a verde */
+        }
+        .search-box {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            background-color: #f2f2f2;
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .search-box input[type="text"] {
+            width: 200px;
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .search-box select {
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .search-box select:focus,
+        .search-box input[type="text"]:focus {
+            outline: none;
+            box-shadow: 0 0 5px #007bff; /* Cambia el color del borde cuando se enfoca */
+        }
+        .search-box input[type="text"]::placeholder {
+            color: #999; /* Cambia el color del texto de marcador de posición */
+        }
+        .search-box input[type="text"]:hover,
+        .search-box select:hover {
+            background-color: #e0e0e0; /* Cambia el color de fondo al pasar el ratón */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Fortnite Weapons</h1>
+    </header>
+    <div class="container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search weapons...">
+            <select id="languageSelect">
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <!-- Add more language options as needed -->
+            </select>
+        </div>
+        <div id="weaponsContainer">
+            <!-- Weapons will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const searchInput = document.getElementById('searchInput');
+            const languageSelect = document.getElementById('languageSelect');
+            const weaponsContainer = document.getElementById('weaponsContainer');
+
+            function fetchWeapons(language, search) {
+                fetch(`https://fortniteapi.io/v1/loot/list?lang=${language}`, {
+                    headers: {
+                        'Authorization': 'f3623e49-a9dca4ba-7818244d-329400ae'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    weaponsContainer.innerHTML = ''; // Clear the container before adding new weapons
+                    const weapons = data.weapons.filter(weapon =>
+                        weapon.name.toLowerCase().includes(search.toLowerCase())
+                    );
+
+                    weapons.forEach(weapon => {
+                        const weaponElement = document.createElement('div');
+                        weaponElement.classList.add('weapon');
+
+                        const imageUrl = weapon.images.icon;
+                        const name = weapon.name;
+                        const description = weapon.description;
+                        const rarity = weapon.rarity;
+                        const type = weapon.type;
+                        const id = weapon.id;
+                        const isEnabled = weapon.enabled;
+
+                        weaponElement.innerHTML = `
+                            <img src="${imageUrl}" alt="${name}">
+                            <h2>${name}</h2>
+                            <p class="weapon-id"><strong>ID:</strong> ${id}</p>
+                            <p><strong>Description:</strong> ${description}</p>
+                            <p><strong>Rarity:</strong> ${rarity}</p>
+                            <p><strong>Type:</strong> ${type}</p>
+                            <p><strong>Valued:</strong> <span class="${isEnabled ? 'not-valued' : 'valued'}">${isEnabled ? 'No' : 'Yes'}</span></p>
+                        `;
+
+                        weaponsContainer.appendChild(weaponElement);
+                    });
+                })
+                .catch(error => console.error('Error fetching weapons:', error));
+            }
+
+            searchInput.addEventListener('input', function() {
+                const search = this.value;
+                const language = languageSelect.value;
+                fetchWeapons(language, search);
+            });
+
+            languageSelect.addEventListener('change', function() {
+                const language = this.value;
+                const search = searchInput.value;
+                fetchWeapons(language, search);
+            });
+
+            // Fetch initial data
+            fetchWeapons(languageSelect.value, searchInput.value);
+        });
+    </script>
+</body>
+</html>
